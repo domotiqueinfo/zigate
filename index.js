@@ -70,7 +70,7 @@ app.get("/overview", (req, res, next) => {
     let devices = require(devicesPath);
     res.render("overview", {
       "data": {
-        "devices": devices,
+        "devices": coordinator.devices,
         "relative": "../"
       }
     });
@@ -92,7 +92,7 @@ app.post("/overview", (req, res, next) => {
       res.append('Set-Cookie', 'zigate_app_token=' + token + ';');
       res.render("overview", {
         "data": {
-          "devices": devices,
+          "devices": coordinator.devices,
           "relative": "../"
         }
       });
@@ -106,11 +106,10 @@ app.post("/overview", (req, res, next) => {
 app.get("/inclusion/start", (req, res, next) => {
   if (tokenExists(req)) {
     coordinator.startInclusion(30);
-    console.log("ICIIC");
     let devices = require(devicesPath);
     res.render("overview", {
       "data": {
-        "devices": devices,
+        "devices": coordinator.devices,
         "alert": {
           "message": "Démarrage du mode inclusion!!",
           "type": "warning"
@@ -130,7 +129,7 @@ app.get("/inclusion/stop", (req, res, next) => {
     coordinator.queryDevices();
     res.render("overview", {
       "data": {
-        "devices": devices,
+        "devices": coordinator.devices,
         "alert": {
           "message": "Arrêt du mode inclusion!!",
           "type": "warning"
@@ -166,14 +165,14 @@ app.get("/device/:deviceId/:command", (req, res, next) => {
     let devices = require(devicesPath);
     devices.filter(d => d.ieee === req.params.deviceId).map(d => {
 
-      if (req.params.command === 'on') {
+      if (req.params.command === 'on' && d.endpoints[0] !== undefined) {
         coordinator.driver.send('action_onoff', {
           address: d.address,
           endpoint: d.endpoints[0].id,
           on: true
         });
 
-      } else if (req.params.command === 'off') {
+      } else if (req.params.command === 'off' && d.endpoints[0] !== undefined) {
         coordinator.driver.send('action_onoff', {
           address: d.address,
           endpoint: d.endpoints[0].id,
@@ -185,7 +184,7 @@ app.get("/device/:deviceId/:command", (req, res, next) => {
 
     res.render("overview", {
       "data": {
-        "devices": devices,
+        "devices": coordinator.devices,
         "alert": {
           "message": "Commande '" + req.params.command + "' envoyée!",
           "type": "info"
