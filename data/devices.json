@@ -1,0 +1,16 @@
+[
+  {
+    "address": 26979,
+    "hex": "0x6963",
+    "ieee": "000d6f0011d5bd5f",
+    "type": "default",
+    "endpoints": [
+      {
+        "id": 1,
+        "hex": "0x0001",
+        "verified": true,
+        "clusters": []
+      }
+    ]
+  }
+]
